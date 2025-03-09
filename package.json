@@ -1,0 +1,21 @@
+{
+  "name": "type",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "nodemon src/index.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^8.12.1",
+    "nodemon": "^3.1.9"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "typescript": "^5.5.3"
+  },
+  "private": true
+}
