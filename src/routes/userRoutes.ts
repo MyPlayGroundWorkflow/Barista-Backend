@@ -6,7 +6,7 @@ const router = express.Router();
 // Get all users
 router.get('/', async (req, res): Promise<void> => {
     try {
-        const users = await User.find().select('-password');
+        const users = await User.find().select('-password'); // Exclude password
         res.json(users);
     } catch (error) {
         console.error(error);
@@ -14,22 +14,51 @@ router.get('/', async (req, res): Promise<void> => {
     }
 });
 
-router.post("/register", (req, res) => {
+
+// Get user by Email
+router.get('/:email', async (req, res): Promise<void> => {
+    try {
+        const user = await User.findOne({email: req.params.email}).select('-password');
+
+        if (!user) {
+            res.status(400).json({ error: 'User not found' });
+            return;
+        }
+
+        res.json(user);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+
+
+
+
+// Register user
+router.post("/register", async (req, res): Promise<void> => {
     try {
         console.log(req.body)
+        const existingUser = await User.findOne({email: req.body.email});
+
+        if (existingUser) {
+            res.status(400).json({ error: 'User already exists' });
+            return;
+        }
+
        const user = new User(req.body);
 
-       // user.save()
-       //     .then(r => res.send(r))
-       //     .catch(e => res.send(e));
-
-       let savedUser = user.save();
+       let savedUser = await user.save();
        res.send(savedUser);
 
     } catch (error) {
         console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 router.put("/", (req, res) => {
     res.send("user get");
