@@ -34,9 +34,6 @@ router.get('/:email', async (req, res): Promise<void> => {
 });
 
 
-
-
-
 // Register user
 router.post("/register", async (req, res): Promise<void> => {
     try {
@@ -59,13 +56,67 @@ router.post("/register", async (req, res): Promise<void> => {
     }
 });
 
+// User login
+router.post("/login", async (req, res): Promise<void> => {
+    try {
+        const user = await User.findOne({email: req.body.email});
 
-router.put("/", (req, res) => {
-    res.send("user get");
+        if (!user) {
+            res.status(400).json({ error: 'User not found' });
+            return;
+        }
+
+        const sendingUser = {
+            email: user.email,
+            name: user.name
+        }
+
+        if (user.password == req.body.password) {
+            res.status(200).json(sendingUser);
+        } else {
+            res.status(401).json({ error: 'Invalid password' });
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
-router.delete("/", (req, res) => {
-    res.send("user get");
+
+// Update user
+router.put("/:email", async (req, res): Promise<void> => {
+    try {
+        const updateUser = await User.findOneAndUpdate({email: req.params.email}, req.body);
+
+        if (!updateUser) {
+            res.status(400).json({ error: 'User not found' });
+            return;
+        }
+
+        res.status(204).json();
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.delete("/:email", async (req, res): Promise<void> => {
+    try {
+        const user = await User.findOneAndDelete({email: req.params.email});
+
+        if (!user) {
+            res.status(400).json({ error: 'User not found' });
+            return;
+        }
+
+        res.status(204).json();
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 export default router;
