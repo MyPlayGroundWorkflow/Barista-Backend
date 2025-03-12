@@ -3,26 +3,75 @@ import Item from '../model/item';
 
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res): Promise<void> => {
   try {
     const items = await Item.find();
     res.json(items);
   } catch (error) {
-    // @ts-ignore
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Error retrieving items", error });
+  }
+});
+
+router.get('/:id', async (req, res): Promise<void> => {
+  try {
+    const item = await Item.findById(req.params.id);
+
+    if (!item) {
+      res.status(404).json({message: 'Item not found'});
+      return
+    }
+
+    res.json(item);
+
+  } catch (error) {
+    res.status(500).json({ message: "Error retrieving item" });
   }
 });
 
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res): Promise<void> => {
   const item = new Item(req.body);
 
   try {
     const newItem = await item.save();
     res.status(201).json(newItem);
   } catch (error) {
-      // @ts-ignore
-      res.status(400).json({ message: error.message });
+    res.status(400).json({ message: 'Error creating Item' });
+  }
+});
+
+router.put('/:id', async (req, res): Promise<void> => {
+  try {
+    const item = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
+
+    if (!item) {
+      res.status(404).json({message: 'Item not found'});
+      return
+    }
+
+    res.status(204).json();
+
+  } catch (error) {
+    res.status(400).json({ message: "Item Update error" });
+  }
+});
+
+
+router.delete('/:id', async (req, res): Promise<void> => {
+  try {
+    const id  = req.params.id;
+
+    const item = await Item.findByIdAndDelete(id);
+
+    if (!item) {
+      res.status(404).json({ message: 'Item not found' });
+      return
+    }
+
+    res.status(204).json();
+
+  } catch (error) {
+    res.status(500).json({ message: "Item delete error" });
   }
 });
 
