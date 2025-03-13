@@ -3,6 +3,7 @@ import Item from '../model/item';
 
 const router = express.Router();
 
+// Get all items
 router.get('/', async (req, res): Promise<void> => {
   try {
     const items = await Item.find();
@@ -12,6 +13,7 @@ router.get('/', async (req, res): Promise<void> => {
   }
 });
 
+// Get item by ID
 router.get('/:id', async (req, res): Promise<void> => {
   try {
     const item = await Item.findById(req.params.id);
@@ -29,17 +31,20 @@ router.get('/:id', async (req, res): Promise<void> => {
 });
 
 
+// Create a new item
 router.post('/', async (req, res): Promise<void> => {
   const item = new Item(req.body);
 
   try {
     const newItem = await item.save();
-    res.status(201).json(newItem);
+    res.status(201).json(newItem);   //201 - created
   } catch (error) {
     res.status(400).json({ message: 'Error creating Item' });
   }
 });
 
+
+// Update an item
 router.put('/:id', async (req, res): Promise<void> => {
   try {
     const item = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -49,14 +54,15 @@ router.put('/:id', async (req, res): Promise<void> => {
       return
     }
 
-    res.status(204).json();
+    res.status(204).json();  //204 - no content
+    // res.status(200).json(item);  //200 - ok
 
   } catch (error) {
     res.status(400).json({ message: "Item Update error" });
   }
 });
 
-
+// Delete an item
 router.delete('/:id', async (req, res): Promise<void> => {
   try {
     const id  = req.params.id;

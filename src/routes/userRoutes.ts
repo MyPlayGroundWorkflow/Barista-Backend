@@ -84,9 +84,12 @@ router.post("/login", async (req, res): Promise<void> => {
 });
 
 
-// Update user
+// Update user name
 router.put("/:email", async (req, res): Promise<void> => {
     try {
+        const user = await User.findOne({email: req.params.email});
+        req.body.password = user?.password;
+
         const updateUser = await User.findOneAndUpdate({email: req.params.email}, req.body);
 
         if (!updateUser) {
@@ -94,13 +97,34 @@ router.put("/:email", async (req, res): Promise<void> => {
             return;
         }
 
-        res.status(204).json();
+        res.status(200).json(updateUser);
 
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+// Update user password
+router.put("/change-password/:email", async (req, res): Promise<void> => {
+    try {
+        const user = await User.findOne({email: req.params.email});
+        req.body.name = user?.name;
+
+        const updateUser = await User.findOneAndUpdate({email: req.params.email}, req.body);
+
+        if (!updateUser) {
+            res.status(400).json({ error: 'User not found' });
+            return;
+        }
+
+        res.status(200).json(updateUser);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+})
 
 router.delete("/:email", async (req, res): Promise<void> => {
     try {

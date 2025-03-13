@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import userRouter from './routes/userRoutes';
 import customerRouter from './routes/customerRoutes';
 import itemRouter from './routes/itemRoutes';
+import orderRouter from './routes/orderRoutes';
 
 
 const app = express();//create express app
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 app.use("/users", userRouter)
 app.use("/customers", customerRouter)
 app.use("/items", itemRouter)
+app.use("/orders", orderRouter)
 
 
 
